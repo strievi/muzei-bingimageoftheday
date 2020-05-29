@@ -57,7 +57,7 @@ class BingImageOfTheDayMetadataRetriever(private val market: BingMarket, private
         for (bingImage in bingImages) {
             val uri = Uri.parse(BING_URL + bingImage.urlbase + "_" + dimension.getStringRepresentation(portrait) + ".jpg")
 
-            result.add(BingImageMetadata(uri, bingImage.copyright!!, bingImage.fullstartdate!!))
+            result.add(BingImageMetadata(uri, bingImage.copyright!!, bingImage.fullstartdate!!, bingImage.copyrightlink!!, bingImage.title!!))
         }
         return result
     }

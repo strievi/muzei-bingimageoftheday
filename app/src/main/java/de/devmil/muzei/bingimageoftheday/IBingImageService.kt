@@ -48,5 +48,6 @@ interface IBingImageService {
         internal var bot: Int = 0
         internal var walle: String? = null
         internal var walls: String? = null
+        internal var title: String? = null
     }
 }

@@ -25,10 +25,12 @@ import java.util.*
 
  * This class represents one Bing image containing all data that this app needs
  */
-class BingImageMetadata(uri: Uri, copyright: String, startDateString: String) {
+class BingImageMetadata(uri: Uri, copyright: String, startDateString: String, copyrightLink: String, title: String) {
     var uri: Uri? = uri
     var copyright: String? = copyright
     var startDate: Date? = null
+    var copyrightLink: String? = copyrightLink
+    var title: String? = title
 
     private fun parseStartDate(startDateString: String): Date {
         val df = SimpleDateFormat("yyyyMMddHHmm", Locale.US)

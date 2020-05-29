@@ -43,12 +43,6 @@ class BingImageOfTheDayWorker(
         return applicationContext.getSharedPreferences("muzeiartsource_$SETTINGS_NAME", 0)
     }
 
-    private fun getImageTitle(imageDate: Date): String {
-        val df = SimpleDateFormat("MM/dd/yyyy", Locale.US)
-
-        return "Bing: " + df.format(imageDate.time)
-    }
-
     override fun doWork(): Result {
         LogUtil.LOGD(TAG, "Request: Loading new Bing images")
 
@@ -130,7 +124,7 @@ class BingImageOfTheDayWorker(
                 Artwork().apply {
                     token = getToken(metadata.startDate, market, isPortrait)
                     attribution = "bing.com"
-                    title = metadata.startDate?.let { getImageTitle(it) } ?: ""
+                    title = metadata.title?: ""
                     byline = metadata.copyright ?: ""
                     persistentUri = metadata.uri
                     webUri = metadata.uri

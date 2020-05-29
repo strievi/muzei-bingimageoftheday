@@ -129,6 +129,7 @@ class BingImageOfTheDayWorker(
             photosMetadata.asSequence().map { metadata ->
                 Artwork().apply {
                     token = getToken(metadata.startDate, market, isPortrait)
+                    attribution = "bing.com"
                     title = metadata.startDate?.let { getImageTitle(it) } ?: ""
                     byline = metadata.copyright ?: ""
                     persistentUri = metadata.uri

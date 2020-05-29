@@ -5,7 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.util.Log
+import android.webkit.URLUtil
 import androidx.work.*
 import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.ProviderContract
@@ -127,7 +129,7 @@ class BingImageOfTheDayWorker(
                     title = metadata.title?: ""
                     byline = metadata.copyright ?: ""
                     persistentUri = metadata.uri
-                    webUri = metadata.uri
+                    webUri = if (URLUtil.isNetworkUrl(metadata.copyrightLink)) Uri.parse(metadata.copyrightLink) else null
                     this.metadata = metadata.startDate?.time.toString()
                 }
             }.sortedByDescending { aw ->

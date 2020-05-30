@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2014 Devmil Solutions
  *
@@ -15,53 +16,14 @@
  */
 package de.devmil.muzei.bingimageoftheday
 
-import android.content.Context
+import android.app.Service
 import android.content.Intent
-import android.content.SharedPreferences
-import android.os.IBinder
-import com.google.android.apps.muzei.api.MuzeiArtSource
-import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
-import com.google.android.apps.muzei.api.UserCommand
-import de.devmil.common.utils.LogUtil
+import android.os.Binder
 
 /**
- * Muzei Art source for Bing images of the day.
- * This class is the plugin entry point for Muzei
+ * This class is kept only to serve as a tombstone to Muzei to know to replace it
+ * with [BingImageOfTheDayArtProvider].
  */
-class BingImageOfTheDayArtSource : RemoteMuzeiArtSource("de.devmil.muzei.Bing") {
-
-    override fun onBind(intent: Intent?): IBinder? {
-        throw UnsupportedOperationException("Not yet implemented")
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        setUserCommands(
-                UserCommand(MuzeiArtSource.BUILTIN_COMMAND_ID_NEXT_ARTWORK))
-    }
-
-    @Throws(RemoteMuzeiArtSource.RetryException::class)
-    override fun onTryUpdate(updateReason: Int) {
-        //NOOP
-    }
-
-    companion object {
-
-        private val TAG = LogUtil.makeLogTag(BingImageOfTheDayArtSource::class.java)
-
-        private val SOURCE_NAME = "BingImageOfTheDayArtSource"
-
-        private val ACTION_ENSUREINITIALIZED = "de.devmil.muzei.bingimageoftheday.ACTION_ENSURE_INITIALIZED"
-
-        fun getSharedPreferences(context: Context): SharedPreferences {
-            return MuzeiArtSource.getSharedPreferences(context, SOURCE_NAME)
-        }
-
-        fun ensureInitialized(context: Context) {
-            val thisServiceIntent = Intent()
-            thisServiceIntent.setClass(context, BingImageOfTheDayArtSource::class.java)
-            thisServiceIntent.action = ACTION_ENSUREINITIALIZED
-            context.startService(thisServiceIntent)
-        }
-    }
+class BingImageOfTheDayArtSource : Service() {
+    override fun onBind(intent: Intent?): Binder? = null
 }

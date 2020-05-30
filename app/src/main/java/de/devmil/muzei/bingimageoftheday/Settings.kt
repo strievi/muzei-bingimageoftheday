@@ -1,5 +1,6 @@
 package de.devmil.muzei.bingimageoftheday
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -7,10 +8,12 @@ import android.content.res.Configuration
 /**
 * Created by michaellamers on 05.05.15.
 */
-class Settings(private val context: Context, private val preferences: SharedPreferences) {
+class Settings(private val context: Context) {
 
     @Suppress("DEPRECATION")
-            // Try find best match based on local
+    private val preferences: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE)
+
+    // Try find best match based on local
     // no best match? Default!
     var bingMarket: BingMarket
         get() {
@@ -69,11 +72,13 @@ class Settings(private val context: Context, private val preferences: SharedPref
         }
 
     companion object {
-        private val PREF_MARKET_CODE = "art_source_settings_market_code"
-        private val PREF_ORIENTATION_PORTRAIT = "art_source_settings_orientation_portrait"
-        private val PREF_CURRENT_IMAGE_NUM = "art_source_runtime_current_image_number"
-        private val PREF_CURRENT_MARKET = "art_source_runtime_current_market"
-        private val PREF_CURRENT_ORIENTATION_PORTRAIT = "art_source_runtime_current_orientation_portrait"
+        private const val PREFS_NAME = "BingImageOfTheDay"
+
+        private const val PREF_MARKET_CODE = "art_source_settings_market_code"
+        private const val PREF_ORIENTATION_PORTRAIT = "art_source_settings_orientation_portrait"
+        private const val PREF_CURRENT_IMAGE_NUM = "art_source_runtime_current_image_number"
+        private const val PREF_CURRENT_MARKET = "art_source_runtime_current_market"
+        private const val PREF_CURRENT_ORIENTATION_PORTRAIT = "art_source_runtime_current_orientation_portrait"
 
         private val DEFAULT_MARKET = BingMarket.EN_US
 

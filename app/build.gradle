@@ -61,7 +61,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation 'com.google.android.apps.muzei:muzei-api:3.0.0-beta02'
+    implementation 'com.google.android.apps.muzei:muzei-api:3.4.0-alpha02'
     implementation "androidx.core:core-ktx:$rootProject.ext.ktxVersion"
     implementation "android.arch.work:work-runtime-ktx:$rootProject.ext.workManagerVersion"
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'

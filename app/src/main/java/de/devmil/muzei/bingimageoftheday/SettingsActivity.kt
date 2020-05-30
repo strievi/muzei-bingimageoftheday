@@ -85,7 +85,7 @@ class SettingsActivity : Activity() {
             spMarket!!.setSelection(GetMarketSpinnerSelection())
             btnLicense = rootView.findViewById(R.id.fragment_settings_button_license) as Button
 
-            val settings = Settings(activity, BingImageOfTheDayArtSource.getSharedPreferences(activity))
+            val settings = Settings(activity)
             val portrait = settings.isOrientationPortrait
 
             rbLandscape!!.isChecked = !portrait
@@ -124,7 +124,7 @@ class SettingsActivity : Activity() {
         }
 
         private fun GetMarketSpinnerSelection(): Int {
-            val settings = Settings(activity, BingImageOfTheDayArtSource.getSharedPreferences(activity))
+            val settings = Settings(activity)
 
             val marketCode = settings.bingMarket.marketCode
 

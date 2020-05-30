@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
 import android.webkit.URLUtil
@@ -23,9 +22,7 @@ class BingImageOfTheDayWorker(
         workerParams: WorkerParameters
 ) : Worker(context, workerParams) {
     companion object {
-        private const val TAG = "BingImageIfTheDayWorker"
-
-        private const val SETTINGS_NAME = "BingImageOfTheDayArtSource"
+        private const val TAG = "BingImageOfTheDayWorker"
 
         internal fun enqueueLoad() {
             Log.d(TAG, "Loading enqued")
@@ -41,10 +38,6 @@ class BingImageOfTheDayWorker(
         private var lastArtworkUpdate: Calendar? = null
     }
 
-    private fun getSharedPreferences() : SharedPreferences {
-        return applicationContext.getSharedPreferences("muzeiartsource_$SETTINGS_NAME", 0)
-    }
-
     override fun doWork(): Result {
         LogUtil.LOGD(TAG, "Request: Loading new Bing images")
 
@@ -52,7 +45,7 @@ class BingImageOfTheDayWorker(
 
             val now = Calendar.getInstance()
 
-            val settings = Settings(applicationContext, getSharedPreferences())
+            val settings = Settings(applicationContext)
             val isPortrait = settings.isOrientationPortrait
             val isCurrentArtworkPortrait = settings.isCurrentOrientationPortrait
 
@@ -78,7 +71,9 @@ class BingImageOfTheDayWorker(
 
             //Default = request the image list from Bing
             var requestNewImages = true
-            val lastArtwork = ProviderContract.Artwork.getLastAddedArtwork(applicationContext, BING_IMAGE_OF_THE_DAY_AUTHORITY)
+            val providerClient = ProviderContract.getProviderClient(
+                    applicationContext, BING_IMAGE_OF_THE_DAY_AUTHORITY)
+            val lastArtwork = providerClient.lastAddedArtwork
             if (lastArtwork != null) {
                 LogUtil.LOGD(TAG, "Found last artwork")
                 val timeInMillis = lastArtwork.metadata?.toLongOrNull()
@@ -123,22 +118,21 @@ class BingImageOfTheDayWorker(
             }
 
             photosMetadata.asSequence().map { metadata ->
-                Artwork().apply {
-                    token = getToken(metadata.startDate, market, isPortrait)
-                    attribution = "bing.com"
-                    title = metadata.title?: ""
-                    byline = metadata.copyright ?: ""
-                    persistentUri = metadata.uri
-                    webUri = if (URLUtil.isNetworkUrl(metadata.copyrightLink)) Uri.parse(metadata.copyrightLink) else null
-                    this.metadata = metadata.startDate?.time.toString()
-                }
+                Artwork(
+                    token = getToken(metadata.startDate, market, isPortrait),
+                    attribution = "bing.com",
+                    title = metadata.title?: "",
+                    byline = metadata.copyright ?: "",
+                    persistentUri = metadata.uri,
+                    webUri = if (URLUtil.isNetworkUrl(metadata.copyrightLink)) Uri.parse(metadata.copyrightLink) else null,
+                    metadata = metadata.startDate?.time.toString())
             }.sortedByDescending { aw ->
                 aw.metadata?.toLongOrNull() ?: 0
             }.firstOrNull()
             ?.let { artwork ->
                 Log.d(TAG, "Got artworks. Selected this one: ${artwork.title} valid on: ${Date(artwork.metadata!!.toLong())}")
                 requestNextImageUpdate(Date(artwork.metadata!!.toLong()))
-                setArtwork(artwork)
+                providerClient.setArtwork(artwork);
                 settings.isCurrentOrientationPortrait = isPortrait
                 settings.currentBingMarket = market
             }
@@ -164,11 +158,6 @@ class BingImageOfTheDayWorker(
         nextBingImageDate.timeInMillis = newestBingImageDate.time
         nextBingImageDate.add(Calendar.DAY_OF_YEAR, 1)
         return nextBingImageDate.time
-    }
-
-    private fun setArtwork(artwork: Artwork) {
-        LogUtil.LOGD(TAG, "Setting artwork: ${artwork.metadata?.toLongOrNull()?.let { Date(it) }}, ${artwork.title}")
-        ProviderContract.Artwork.setArtwork(applicationContext, BingImageOfTheDayArtProvider::class.java, artwork)
     }
 
     private fun requestNextImageUpdate(currentImageDate: Date): Calendar {

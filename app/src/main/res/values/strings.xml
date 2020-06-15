@@ -12,7 +12,8 @@
     <string name="copyright">© 2017 Devmil Solutions - Michael Lamers</string>
     <string name="activity_license_info_license_info_headline">License Info</string>
     <string name="license_info_activity_label">About</string>
-    <string name="command_share_message">My current Android wallpaper: \'%1$s\'</string>
-    <string name="command_share_title">Share current Bing image</string>
-    <string name="command_open_title">Open current Bing image URL</string>
+    <string name="command_share_title">Share artwork</string>
+    <string name="command_open_title">Open artwork URL</string>
+    <string name="command_share_error">Cannot share artwork.</string>
+    <string name="command_open_error">Cannot open artwork URL.</string>
 </resources>

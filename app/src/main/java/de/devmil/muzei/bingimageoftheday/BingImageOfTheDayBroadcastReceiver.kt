@@ -1,28 +1,13 @@
 package de.devmil.muzei.bingimageoftheday
 
-import android.annotation.TargetApi
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
+import android.content.*
+import android.os.*
 import androidx.core.content.FileProvider
-import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.ProviderContract
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import de.devmil.common.utils.LogUtil
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import de.devmil.common.utils.goAsync
+import de.devmil.common.utils.toastFromBackground
 
 class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
     companion object {
@@ -46,100 +31,83 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        val providerClient = ProviderContract.getProviderClient(
-                context, BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY)
-        providerClient.lastAddedArtwork?.let {
+        goAsync {
             when (intent.action) {
                 INTENT_ACTION_SHARE -> {
-                    shareCurrentImage(context, it)
+                    shareLast(context)
                 }
                 INTENT_ACTION_OPEN -> {
-                    openCurrentImage(context, it)
+                    openLast(context)
                 }
             }
         }
     }
 
-    @TargetApi(26)
-    fun getLocalBitmapUri(bmp: Bitmap?, context: Context?): Uri? {
-        var bmpUri: Uri? = null
-        bmp?.let { bitmap ->
-            try {
-                context?.let { ctx ->
-                    val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-kkmmss"))
-                    val imagePath = File(context.cacheDir, "images")
-                    imagePath.mkdirs()
-                    val outputFile = File(imagePath, "output-$timestamp.png")
-                    val out = FileOutputStream(outputFile)
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)
-                    out.close()
-                    bmpUri = FileProvider.getUriForFile(context, "de.devmil.muzei.bingimageoftheday.ImageFileProvider", outputFile)
+    private fun shareLast(context: Context) {
+        LogUtil.LOGD(TAG, "Got share request")
+        val success = ProviderContract.getProviderClient(
+                context, BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
+            lastAddedArtwork?.let { artwork ->
+                // TODO: store cacheFilename into artwork metadata and retrieve it from here
+                val cacheFilename = artwork.persistentUri.toString().substringAfterLast("id=OHR.")
+                try {
+                    cacheFilename.let { filename ->
+                        context.cacheDir?.resolve("images")?.apply { mkdir() }?.apply { deleteOnExit() }?.resolve(filename)
+                    }?.let { cacheFile ->
+                        if (!cacheFile.exists()) {
+                            if (artwork.data.exists()) {
+                                artwork.data.copyTo(cacheFile)
+                            } else {
+                                // Attempt to rebuild artwork cache
+                                val artworkUri = ContentUris.withAppendedId(contentUri, artwork.id)
+                                context.contentResolver.openFileDescriptor(
+                                        artworkUri, "r").run {
+                                    ParcelFileDescriptor.AutoCloseInputStream(this).copyTo(cacheFile.outputStream())
+                                }
+                            }
+                        }
+                        val shareMessageBuilder = StringBuilder()
+                        shareMessageBuilder.apply {
+                            if (artwork.title.isNullOrEmpty()) {
+                                append(artwork.byline)
+                            } else {
+                                append("${artwork.title} - ${artwork.byline}")
+                            }
+                            append(" #BingImageOfTheDay")
+                            if (artwork.webUri != null) {
+                                append("\n\n${artwork.webUri}")
+                            }
+                        }
+                        Intent(Intent.ACTION_SEND).apply {
+                            val shareUri = FileProvider.getUriForFile(context, "de.devmil.muzei.bingimageoftheday.ImageFileProvider", cacheFile)
+                            putExtra(Intent.EXTRA_TEXT, shareMessageBuilder.toString())
+                            putExtra(Intent.EXTRA_STREAM, shareUri)
+                            clipData = ClipData(shareMessageBuilder.toString(), arrayOf("image/*"), ClipData.Item(shareUri))
+                            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            type = "image/*"
+                        }.let {
+                            context.startActivity(Intent.createChooser(it, context.getString(R.string.command_share_title)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                        }
+                        true
+                    } ?: false
+                } catch (e: Exception) {
+                    LogUtil.LOGE(TAG, "An exception occurred while sharing file", e)
+                    false
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                Toast.makeText(context, "Error downloading the image to share", Toast.LENGTH_LONG).show()
-            }
+            } ?: false
         }
-        return bmpUri
-    }
-
-    private fun shareCurrentImage(context: Context, artwork: Artwork?) {
-        LogUtil.LOGD(TAG, "got share request")
-        artwork?.let {
-            var shareIntent = Intent()
-            shareIntent.action = Intent.ACTION_SEND
-            val shareMessage = context?.getString(R.string.command_share_message, it.byline)
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "$shareMessage - ${it.persistentUri.toString()}")
-            shareIntent.type = "text/plain"
-            //shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-            LogUtil.LOGD(TAG, "Sharing ${it.persistentUri}")
-
-            //For API > 26: download image and attach that
-            if(Build.VERSION.SDK_INT >= 26) {
-                val uiHandler = Handler(Looper.getMainLooper())
-                uiHandler.post {
-                    Picasso.with(context).load(it.persistentUri).into(object : Target {
-                        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                            LogUtil.LOGD(TAG, "Downloading ${it.persistentUri}")
-                        }
-
-                        override fun onBitmapFailed(errorDrawable: Drawable?) {
-                            Toast.makeText(context, "Error downloading the image to share", Toast.LENGTH_LONG).show()
-                        }
-
-                        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, getLocalBitmapUri(bitmap, context))
-                            shareIntent.type = "image/png"
-
-                            executeIntentSharing(context, shareIntent)
-                        }
-                    })
-                }
-            } else { // SDK < 26 => directly share (the URL)
-                executeIntentSharing(context, shareIntent)
-            }
+        if (!success) {
+            context.toastFromBackground(R.string.command_share_error)
         }
     }
 
-    private fun executeIntentSharing(context: Context, intent: Intent) {
-        var shareIntent = Intent.createChooser(intent, context?.getString(R.string.command_share_title) ?: "")
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-        context?.startActivity(shareIntent)
-    }
-
-    private fun openCurrentImage(context: Context, artwork: Artwork?) {
-        LogUtil.LOGD(TAG, "got open request")
-        artwork?.let {
-            var openIntent = Intent(Intent.ACTION_VIEW)
-
-            LogUtil.LOGD(TAG, "Opening ${it.persistentUri}")
-
-            openIntent.data = it.persistentUri
-            openIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-            context?.startActivity(openIntent)
+    private fun openLast(context: Context) {
+        LogUtil.LOGD(TAG, "Got open request")
+        ProviderContract.getProviderClient(
+                context, BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
+            lastAddedArtwork?.let { artwork ->
+                context.startActivity(Intent(Intent.ACTION_VIEW, artwork.persistentUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            } ?: context.toastFromBackground(R.string.command_open_error)
         }
     }
 }

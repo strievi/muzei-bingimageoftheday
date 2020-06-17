@@ -48,10 +48,9 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
         val success = ProviderContract.getProviderClient(
                 context, BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
             lastAddedArtwork?.let { artwork ->
-                // TODO: store cacheFilename into artwork metadata and retrieve it from here
-                val cacheFilename = artwork.persistentUri.toString().substringAfterLast("id=OHR.")
+                val cacheFilename = artwork.metadata
                 try {
-                    cacheFilename.let { filename ->
+                    cacheFilename?.let { filename ->
                         context.cacheDir?.resolve("images")?.apply { mkdir() }?.apply { deleteOnExit() }?.resolve(filename)
                     }?.let { cacheFile ->
                         if (!cacheFile.exists()) {

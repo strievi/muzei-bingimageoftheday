@@ -117,24 +117,22 @@ class BingImageOfTheDayWorker(
                 return Result.FAILURE
             }
 
-            photosMetadata.asSequence().map { metadata ->
+            val latestMetadata = photosMetadata.maxBy { it.startDate!! }
+            latestMetadata?.run {
                 Artwork(
-                    token = getToken(metadata.startDate, market, isPortrait),
-                    attribution = "bing.com",
-                    title = metadata.title?: "",
-                    byline = metadata.copyright ?: "",
-                    persistentUri = metadata.uri,
-                    webUri = if (URLUtil.isNetworkUrl(metadata.copyrightLink)) Uri.parse(metadata.copyrightLink) else null,
-                    metadata = metadata.startDate?.time.toString())
-            }.sortedByDescending { aw ->
-                aw.metadata?.toLongOrNull() ?: 0
-            }.firstOrNull()
-            ?.let { artwork ->
-                Log.d(TAG, "Got artworks. Selected this one: ${artwork.title} valid on: ${Date(artwork.metadata!!.toLong())}")
-                requestNextImageUpdate(Date(artwork.metadata!!.toLong()))
-                providerClient.setArtwork(artwork);
-                settings.isCurrentOrientationPortrait = isPortrait
-                settings.currentBingMarket = market
+                        token = getToken(startDate, market, isPortrait),
+                        attribution = "bing.com",
+                        title = title ?: "",
+                        byline = copyright ?: "",
+                        persistentUri = uri,
+                        webUri = if (URLUtil.isNetworkUrl(copyrightLink)) Uri.parse(copyrightLink) else null,
+                        metadata = startDate?.time.toString()).let { artwork ->
+                    Log.d(TAG, "Got artwork: ${artwork.title} valid on: ${Date(artwork.metadata!!.toLong())}")
+                    requestNextImageUpdate(Date(artwork.metadata!!.toLong()))
+                    providerClient.setArtwork(artwork);
+                    settings.isCurrentOrientationPortrait = isPortrait
+                    settings.currentBingMarket = market
+                }
             }
             return Result.SUCCESS
         }

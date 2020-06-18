@@ -18,15 +18,6 @@
 
 -keep public class * extends android.app,backup.BackupAgent
 
-#EventBus clients
--keepclassmembers class ** {
-    public void onEvent*(**);
-    void onEvent*(**);
-}
-
-# Eventbus lib
--dontwarn de.greenrobot.event.**
-
 # okio
 
 -dontwarn okio.**

@@ -15,14 +15,22 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
 
         const val INTENT_ACTION_SHARE = "de.devmil.muzei.bingimageoftheday.action.SHARE"
         const val INTENT_ACTION_OPEN = "de.devmil.muzei.bingimageoftheday.action.OPEN"
+        const val INTENT_ACTION_UPDATE = "de.devmil.muzei.bingimageoftheday.action.UPDATE"
+
+        fun createIntent(
+                context: Context,
+                action: String
+        ): Intent {
+            return Intent(context, BingImageOfTheDayBroadcastReceiver::class.java).apply {
+                setAction(action)
+            }
+        }
 
         fun createPendingIntent(
                 context: Context,
                 action: String
         ): PendingIntent {
-            val intent = Intent(context, BingImageOfTheDayBroadcastReceiver::class.java).apply {
-                setAction(action)
-            }
+            val intent = createIntent(context, action)
             return PendingIntent.getBroadcast(context,
                     0,
                     intent,
@@ -39,6 +47,9 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
                 }
                 INTENT_ACTION_OPEN -> {
                     openLast(context)
+                }
+                INTENT_ACTION_UPDATE, Intent.ACTION_BOOT_COMPLETED -> {
+                    BingImageOfTheDayArtProvider.doUpdate(context)
                 }
             }
         }

@@ -44,7 +44,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled false //EventBus seems not to work using the current config
+            minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             def propertiesFile = file('../Key/keystore.properties')
@@ -67,7 +67,6 @@ dependencies {
     implementation "android.arch.work:work-runtime-ktx:$rootProject.ext.workManagerVersion"
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'de.greenrobot:eventbus:2.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
 }

@@ -67,14 +67,9 @@
             android:name="de.devmil.muzei.bingimageoftheday.BingImageOfTheDayBroadcastReceiver"
             android:enabled="true"
             android:exported="true" >
-        </receiver>
-
-        <receiver
-            android:name="de.devmil.muzei.bingimageoftheday.UpdateReceiver"
-            android:enabled="true"
-            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
     </application>

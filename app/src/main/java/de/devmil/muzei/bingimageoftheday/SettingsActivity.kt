@@ -35,10 +35,6 @@ import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.TextView
 
-import de.devmil.muzei.bingimageoftheday.events.RequestMarketSettingChangedEvent
-import de.devmil.muzei.bingimageoftheday.events.RequestPortraitSettingChangedEvent
-import de.greenrobot.event.EventBus
-
 class SettingsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,7 +92,10 @@ class SettingsActivity : Activity() {
                     return@OnCheckedChangeListener
                 val isPortrait = compoundButton === rbPortrait
                 settings.isOrientationPortrait = isPortrait
-                EventBus.getDefault().post(RequestPortraitSettingChangedEvent(activity))
+                BingImageOfTheDayBroadcastReceiver.createIntent(
+                        activity, BingImageOfTheDayBroadcastReceiver.INTENT_ACTION_UPDATE).also { intent ->
+                    activity.sendBroadcast(intent)
+                }
             }
 
             rbLandscape!!.setOnCheckedChangeListener(listener)
@@ -105,7 +104,10 @@ class SettingsActivity : Activity() {
                 override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
                     val market = marketAdapter!!.getItem(i)
                     settings.bingMarket = market
-                    EventBus.getDefault().post(RequestMarketSettingChangedEvent(activity))
+                    BingImageOfTheDayBroadcastReceiver.createIntent(
+                            activity, BingImageOfTheDayBroadcastReceiver.INTENT_ACTION_UPDATE).also { intent ->
+                        activity.sendBroadcast(intent)
+                    }
                 }
 
                 override fun onNothingSelected(adapterView: AdapterView<*>) {

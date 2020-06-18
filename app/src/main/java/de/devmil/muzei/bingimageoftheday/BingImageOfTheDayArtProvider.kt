@@ -3,40 +3,17 @@ package de.devmil.muzei.bingimageoftheday
 import android.content.Context
 import androidx.core.app.RemoteActionCompat
 import androidx.core.graphics.drawable.IconCompat
+import com.google.android.apps.muzei.api.MuzeiContract
 import com.google.android.apps.muzei.api.UserCommand
 import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import de.devmil.common.utils.LogUtil
-import de.devmil.muzei.bingimageoftheday.events.RequestMarketSettingChangedEvent
-import de.devmil.muzei.bingimageoftheday.events.RequestPortraitSettingChangedEvent
+import de.devmil.muzei.bingimageoftheday.BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY
 import de.devmil.muzei.bingimageoftheday.worker.BingImageOfTheDayWorker
-import de.greenrobot.event.EventBus
 import java.io.InputStream
 
 
 class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
-
-    /**
-     * This class is used to get EventBus events
-     */
-    class EventCatcher {
-        init {
-            EventBus.getDefault().register(this)
-        }
-
-        fun onEventBackgroundThread(e: RequestPortraitSettingChangedEvent) {
-            requestUpdate(e.context)
-        }
-
-        fun onEventBackgroundThread(e: RequestMarketSettingChangedEvent) {
-            requestUpdate(e.context)
-        }
-
-        private fun requestUpdate(context: Context) {
-            doUpdate()
-        }
-
-    }
 
     companion object {
         private val TAG = BingImageOfTheDayArtProvider::class.java.simpleName
@@ -44,28 +21,15 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
         private const val COMMAND_ID_SHARE = 2
         private const val COMMAND_ID_OPEN = 3
 
-        private var CatcherInstance: BingImageOfTheDayArtProvider.EventCatcher? = null
-
-        init {
-            //instantiate the EventCatcher when BingImageOfTheDayArtSource is loaded
-            CatcherInstance = BingImageOfTheDayArtProvider.EventCatcher()
-        }
-
-        private var _isActive: Boolean? = null
-        var isActive: Boolean?
-            get() = _isActive
-            private set(value) {
-                _isActive = value
-            }
-
-        fun doUpdate() {
+        fun doUpdate(context: Context) {
             LogUtil.LOGD(TAG, "Received update request")
-            BingImageOfTheDayWorker.enqueueLoad()
+            if (MuzeiContract.Sources.isProviderSelected(context, BING_IMAGE_OF_THE_DAY_AUTHORITY)) {
+                BingImageOfTheDayWorker.enqueueLoad()
+            }
         }
     }
 
     override fun onLoadRequested(initial: Boolean) {
-        isActive = true
         LogUtil.LOGD(TAG, "Received load request")
         BingImageOfTheDayWorker.enqueueLoad()
     }

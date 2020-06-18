@@ -25,7 +25,7 @@ class UpdateReceiver : BroadcastReceiver() {
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
-        LogUtil.LOGD(TAG, "received update")
+        LogUtil.LOGD(TAG, "Received update request")
 
         if(BingImageOfTheDayArtProvider.isActive ?: false) {
             LogUtil.LOGD(TAG, "Updating provider")
@@ -34,6 +34,6 @@ class UpdateReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private const val TAG = "UpdateReceiver"
+        private val TAG = UpdateReceiver::class.java.simpleName
     }
 }

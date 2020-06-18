@@ -15,10 +15,9 @@
  */
 package de.devmil.common.licensing
 
+import de.devmil.common.utils.LogUtil
 import org.json.JSONException
 import org.json.JSONObject
-
-import de.devmil.common.utils.LogUtil.LOGW
 
 /**
 * Created by devmil on 18.04.14.
@@ -27,6 +26,7 @@ class PackageInfo private constructor(val name: String, val vendor: String, val 
     val license: LicenseDefinition by lazy { licenseAccess.getLicense(licenseId) }
 
     companion object {
+        private val TAG = PackageInfo::class.java.simpleName
 
         private val NAME_IDENTIFIER = "name"
         private val VENDOR_IDENTIFIER = "vendor"
@@ -47,7 +47,7 @@ class PackageInfo private constructor(val name: String, val vendor: String, val 
 
                 return result
             } catch (e: JSONException) {
-                LOGW(PackageInfo::class.java.simpleName, "Error reading LicenseDefinition", e)
+                LogUtil.LOGE(TAG, "Error reading LicenseDefinition", e)
                 return null
             }
 

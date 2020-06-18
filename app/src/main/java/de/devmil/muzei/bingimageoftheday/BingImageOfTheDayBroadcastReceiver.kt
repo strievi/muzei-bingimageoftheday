@@ -11,7 +11,7 @@ import de.devmil.common.utils.toastFromBackground
 
 class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
     companion object {
-        private const val TAG = "BingImageOfTheDayBroadcastReceiver"
+        private val TAG = BingImageOfTheDayBroadcastReceiver::class.java.simpleName
 
         const val INTENT_ACTION_SHARE = "de.devmil.muzei.bingimageoftheday.action.SHARE"
         const val INTENT_ACTION_OPEN = "de.devmil.muzei.bingimageoftheday.action.OPEN"
@@ -31,6 +31,7 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        LogUtil.LOGD(TAG, "Received broadcast Intent with action=${intent.action}")
         goAsync {
             when (intent.action) {
                 INTENT_ACTION_SHARE -> {
@@ -44,10 +45,10 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun shareLast(context: Context) {
-        LogUtil.LOGD(TAG, "Got share request")
         val success = ProviderContract.getProviderClient(
                 context, BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
             lastAddedArtwork?.let { artwork ->
+                LogUtil.LOGD(TAG, "Sharing artwork with token=${artwork.token}")
                 val cacheFilename = artwork.metadata
                 try {
                     cacheFilename?.let { filename ->
@@ -90,7 +91,7 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
                         true
                     } ?: false
                 } catch (e: Exception) {
-                    LogUtil.LOGE(TAG, "An exception occurred while sharing file", e)
+                    LogUtil.LOGE(TAG, "Error sharing file", e)
                     false
                 }
             } ?: false
@@ -101,10 +102,10 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun openLast(context: Context) {
-        LogUtil.LOGD(TAG, "Got open request")
         ProviderContract.getProviderClient(
                 context, BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
             lastAddedArtwork?.let { artwork ->
+                LogUtil.LOGD(TAG, "Opening URL for artwork with token=${artwork.token}")
                 context.startActivity(Intent(Intent.ACTION_VIEW, artwork.persistentUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             } ?: context.toastFromBackground(R.string.command_open_error)
         }

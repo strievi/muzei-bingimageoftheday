@@ -39,7 +39,7 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
     }
 
     companion object {
-        private const val TAG = "BingImageOfTheDayArtProvider"
+        private val TAG = BingImageOfTheDayArtProvider::class.java.simpleName
 
         private const val COMMAND_ID_SHARE = 2
         private const val COMMAND_ID_OPEN = 3
@@ -59,18 +59,20 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
             }
 
         fun doUpdate() {
+            LogUtil.LOGD(TAG, "Received update request")
             BingImageOfTheDayWorker.enqueueLoad()
         }
     }
 
     override fun onLoadRequested(initial: Boolean) {
         isActive = true
+        LogUtil.LOGD(TAG, "Received load request")
         BingImageOfTheDayWorker.enqueueLoad()
     }
 
     override fun openFile(artwork: Artwork): InputStream {
-        LogUtil.LOGD(TAG, "Loading artwork: ${artwork.title} (${artwork.persistentUri})")
-        return super.openFile(artwork);
+        LogUtil.LOGD(TAG, "Opening file for artwork with token=${artwork.token}")
+        return super.openFile(artwork)
     }
 
     private fun createShareAction(context: Context, artwork: Artwork): RemoteActionCompat {

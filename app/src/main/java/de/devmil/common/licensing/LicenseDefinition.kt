@@ -15,16 +15,16 @@
  */
 package de.devmil.common.licensing
 
+import de.devmil.common.utils.LogUtil
 import org.json.JSONException
 import org.json.JSONObject
-
-import de.devmil.common.utils.LogUtil.LOGW
 
 /**
 * Created by devmil on 18.04.14.
 */
 class LicenseDefinition private constructor(val id: String, val name: String, val url: String, val content: String) {
     companion object {
+        private val TAG = LicenseDefinition::class.java.simpleName
 
         private val ID_IDENTIFIER = "id"
         private val URL_IDENTIFIER = "url"
@@ -41,7 +41,7 @@ class LicenseDefinition private constructor(val id: String, val name: String, va
 
                 return result
             } catch (e: JSONException) {
-                LOGW(LicenseDefinition::class.java.simpleName, "Error reading LicenseDefinition", e)
+                LogUtil.LOGE(TAG, "Error reading LicenseDefinition", e)
                 return null
             }
 

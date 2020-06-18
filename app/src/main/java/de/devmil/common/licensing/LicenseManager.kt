@@ -16,7 +16,7 @@
 package de.devmil.common.licensing
 
 import android.content.Context
-import de.devmil.common.utils.LogUtil.LOGW
+import de.devmil.common.utils.LogUtil
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -54,7 +54,7 @@ class LicenseManager(private val _Context: Context, private val licenseInfoFileI
         try {
             obj = JSONObject(licenseInfo.toString())
         } catch (e: JSONException) {
-            LOGW(TAG, "Error reading LicenseInfo", e)
+            LogUtil.LOGE(TAG, "Error reading LicenseInfo", e)
             return null
         }
 
@@ -62,7 +62,6 @@ class LicenseManager(private val _Context: Context, private val licenseInfoFileI
     }
 
     companion object {
-
         private val TAG = LicenseManager::class.java.simpleName
     }
 }

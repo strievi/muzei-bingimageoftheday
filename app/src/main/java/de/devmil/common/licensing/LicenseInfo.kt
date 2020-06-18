@@ -15,6 +15,7 @@
  */
 package de.devmil.common.licensing
 
+import de.devmil.common.utils.LogUtil
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -22,8 +23,6 @@ import org.json.JSONObject
 import java.util.ArrayList
 import java.util.Dictionary
 import java.util.Hashtable
-
-import de.devmil.common.utils.LogUtil.LOGW
 
 /**
 * Created by devmil on 18.04.14.
@@ -47,7 +46,6 @@ class LicenseInfo private constructor() : ILicenseAccess {
     }
 
     companion object {
-
         private val TAG = LicenseInfo::class.java.simpleName
 
         private val LICENSE_ARRAY_IDENTIFIER = "license"
@@ -59,7 +57,7 @@ class LicenseInfo private constructor() : ILicenseAccess {
             try {
                 licenses = obj.getJSONArray(LICENSE_ARRAY_IDENTIFIER)
             } catch (e: JSONException) {
-                LOGW(TAG, "Error reading LicenseInfo", e)
+                LogUtil.LOGE(TAG, "Error reading LicenseInfo", e)
                 return null
             }
 
@@ -70,7 +68,7 @@ class LicenseInfo private constructor() : ILicenseAccess {
                     if (ld != null)
                         result._Licenses.put(ld.id, ld)
                 } catch (e: JSONException) {
-                    LOGW(TAG, "Error reading LicenseInfo", e)
+                    LogUtil.LOGE(TAG, "Error reading LicenseInfo", e)
                 }
 
             }
@@ -78,7 +76,7 @@ class LicenseInfo private constructor() : ILicenseAccess {
             try {
                 packages = obj.getJSONArray(PACKAGE_ARRAY_IDENTIFIER)
             } catch (e: JSONException) {
-                LOGW(TAG, "Error reading LicenseInfo", e)
+                LogUtil.LOGE(TAG, "Error reading LicenseInfo", e)
                 return null
             }
 
@@ -89,7 +87,7 @@ class LicenseInfo private constructor() : ILicenseAccess {
                     if (pi != null)
                         result._Packages.add(pi)
                 } catch (e: JSONException) {
-                    LOGW(TAG, "Error reading LicenseInfo", e)
+                    LogUtil.LOGE(TAG, "Error reading LicenseInfo", e)
                 }
 
             }

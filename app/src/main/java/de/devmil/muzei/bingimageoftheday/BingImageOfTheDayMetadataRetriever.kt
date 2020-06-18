@@ -16,7 +16,7 @@
 package de.devmil.muzei.bingimageoftheday
 
 import android.net.Uri
-import android.util.Log
+import de.devmil.common.utils.LogUtil
 
 import java.util.ArrayList
 
@@ -32,24 +32,19 @@ class BingImageOfTheDayMetadataRetriever(private val market: BingMarket, private
 
     val bingImageOfTheDayMetadata: List<BingImageMetadata>?
         get() {
+            LogUtil.LOGD(TAG, "Querying Bing API")
             val restAdapter = Retrofit.Builder()
                     .baseUrl(BING_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 
-            try {
-                val service = restAdapter.create(IBingImageService::class.java)
-                val response = service.getImageOfTheDayMetadata(MAXIMUM_BING_IMAGE_NUMBER, market.marketCode).execute().body()
+            val service = restAdapter.create(IBingImageService::class.java)
+            val response = service.getImageOfTheDayMetadata(MAXIMUM_BING_IMAGE_NUMBER, market.marketCode).execute().body()
 
-                if (response?.images == null)
-                    return null
-
-                return getMetadata(response.images!!)
-            } catch (e: Exception) {
-                Log.w(TAG, "Error from Bing: ", e)
+            if (response?.images == null)
                 return null
-            }
 
+            return getMetadata(response.images!!)
         }
 
     private fun getMetadata(bingImages: List<IBingImageService.BingImage>): List<BingImageMetadata> {
@@ -63,8 +58,7 @@ class BingImageOfTheDayMetadataRetriever(private val market: BingMarket, private
     }
 
     companion object {
-
-        private val TAG = BingImageOfTheDayMetadataRetriever::class.java.name
+        private val TAG = BingImageOfTheDayMetadataRetriever::class.java.simpleName
 
         private val BING_URL = "https://www.bing.com"
 

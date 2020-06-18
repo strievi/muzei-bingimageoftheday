@@ -107,7 +107,7 @@ class LicenseInfoActivity : Activity() {
 
                     startActivity(intent)
                 } catch (e: Exception) {
-                    LogUtil.LOGW(TAG, "Error parsing package url", e)
+                    LogUtil.LOGE(TAG, "Error parsing package url", e)
                 }
             }
             holder.licenseButton!!.text = item.license.name
@@ -133,7 +133,6 @@ class LicenseInfoActivity : Activity() {
     }
 
     companion object {
-
         private val TAG = LicenseInfoActivity::class.java.simpleName
     }
 }

@@ -18,7 +18,8 @@
     <string name="command_open_error">Cannot open artwork URL.</string>
 
     <string name="mkt_unknown">Random</string>
-    <string name="mkt_ar_XA">Arabic – Arabia</string>
+    <string name="mkt_ar_SA">Arabic – Saudi Arabia</string>
+    <string name="mkt_ar_XA">Arabic – United Arab Emirates</string>
     <string name="mkt_bg_BG">Bulgarian – Bulgaria</string>
     <string name="mkt_cs_CZ">Czech – Czech Republic</string>
     <string name="mkt_da_DK">Danish – Denmark</string>
@@ -68,7 +69,6 @@
     <string name="mkt_ro_RO">Romanian – Romania</string>
     <string name="mkt_ru_RU">Russian – Russia</string>
     <string name="mkt_sk_SK">Slovak – Slovak Republic</string>
-    <string name="mkt_sl_SL">Slovenian – Slovenia</string>
     <string name="mkt_sv_SE">Swedish – Sweden</string>
     <string name="mkt_th_TH">Thai – Thailand</string>
     <string name="mkt_tr_TR">Turkish – Turkey</string>

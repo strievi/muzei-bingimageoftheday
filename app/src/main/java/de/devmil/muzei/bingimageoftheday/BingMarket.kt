@@ -24,6 +24,7 @@ package de.devmil.muzei.bingimageoftheday
  */
 enum class BingMarket private constructor(val marketCode: String, private val marketResourceId: Int, val logoResourceId: Int) {
     Unknown("", R.string.mkt_unknown, R.drawable.unknown),
+    AR_SA("ar-SA", R.string.mkt_ar_SA, R.drawable.saudi_arabia),
     AR_XA("ar-XA", R.string.mkt_ar_XA, R.drawable.united_arab_emirates),
     BG_BG("bg-BG", R.string.mkt_bg_BG, R.drawable.bulgaria),
     CS_CZ("cs-CZ", R.string.mkt_cs_CZ, R.drawable.czech_republic),
@@ -74,7 +75,6 @@ enum class BingMarket private constructor(val marketCode: String, private val ma
     RO_RO("ro-RO", R.string.mkt_ro_RO, R.drawable.romania),
     RU_RU("ru-RU", R.string.mkt_ru_RU, R.drawable.russia),
     SK_SK("sk-SK", R.string.mkt_sk_SK, R.drawable.slovakia),
-    SL_SL("sl-SL", R.string.mkt_sl_SL, R.drawable.slovenia),
     SV_SE("sv-SE", R.string.mkt_sv_SE, R.drawable.sweden),
     TH_TH("th-TH", R.string.mkt_th_TH, R.drawable.thailand),
     TR_TR("tr-TR", R.string.mkt_tr_TR, R.drawable.turkey),

@@ -18,6 +18,7 @@
     <string name="command_open_error">Impossible d\'ouvrir l\'URL de l\'œuvre.</string>
 
     <string name="mkt_unknown">Aléatoire</string>
+    <string name="mkt_ar_SA">Arabe – Arabie Saoudite</string>
     <string name="mkt_ar_XA">Arabe – Émirats arabes unis</string>
     <string name="mkt_bg_BG">Bulgare – Bulgarie</string>
     <string name="mkt_cs_CZ">Tchèque – République Tchèque</string>
@@ -68,7 +69,6 @@
     <string name="mkt_ro_RO">Roumain – Roumanie</string>
     <string name="mkt_ru_RU">Russe – Russie</string>
     <string name="mkt_sk_SK">Slovaque – Slovaquie</string>
-    <string name="mkt_sl_SL">Slovène – Slovénie</string>
     <string name="mkt_sv_SE">Suédois – Suède</string>
     <string name="mkt_th_TH">Thaï – Thaïlande</string>
     <string name="mkt_tr_TR">Turque – Turquie</string>

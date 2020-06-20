@@ -102,11 +102,13 @@ class SettingsActivity : Activity() {
             rbPortrait!!.setOnCheckedChangeListener(listener)
             spMarket!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                    val market = marketAdapter!!.getItem(i)
-                    settings.bingMarket = market
-                    BingImageOfTheDayBroadcastReceiver.createIntent(
-                            activity, BingImageOfTheDayBroadcastReceiver.INTENT_ACTION_UPDATE).also { intent ->
-                        activity.sendBroadcast(intent)
+                    val market = marketAdapter!!.getItem(i) ?: Settings.DEFAULT_MARKET
+                    if (market.marketCode != settings.bingMarket.marketCode) {
+                        settings.bingMarket = market
+                        BingImageOfTheDayBroadcastReceiver.createIntent(
+                                activity, BingImageOfTheDayBroadcastReceiver.INTENT_ACTION_UPDATE).also { intent ->
+                            activity.sendBroadcast(intent)
+                        }
                     }
                 }
 

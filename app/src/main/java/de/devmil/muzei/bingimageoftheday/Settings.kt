@@ -50,7 +50,7 @@ class Settings(private val context: Context) {
         private const val PREF_MARKET_CODE = "art_source_settings_market_code"
         private const val PREF_ORIENTATION_PORTRAIT = "art_source_settings_orientation_portrait"
 
-        private val DEFAULT_MARKET = BingMarket.EN_US
+        val DEFAULT_MARKET = BingMarket.EN_US
 
         private fun isPortraitDefault(context: Context): Boolean {
             val xlarge = context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_XLARGE

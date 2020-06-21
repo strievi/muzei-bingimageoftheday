@@ -101,7 +101,7 @@ class SettingsActivity : Activity() {
             rbLandscape!!.setOnCheckedChangeListener(listener)
             rbPortrait!!.setOnCheckedChangeListener(listener)
             spMarket!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+                override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
                     val market = marketAdapter!!.getItem(i) ?: Settings.DEFAULT_MARKET
                     if (market.marketCode != settings.bingMarket.marketCode) {
                         settings.bingMarket = market

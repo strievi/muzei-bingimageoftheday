@@ -13,9 +13,9 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
     companion object {
         private val TAG = BingImageOfTheDayBroadcastReceiver::class.java.simpleName
 
-        const val INTENT_ACTION_SHARE = "de.devmil.muzei.bingimageoftheday.action.SHARE"
-        const val INTENT_ACTION_OPEN = "de.devmil.muzei.bingimageoftheday.action.OPEN"
-        const val INTENT_ACTION_UPDATE = "de.devmil.muzei.bingimageoftheday.action.UPDATE"
+        const val INTENT_ACTION_SHARE = "${BuildConfig.APPLICATION_ID}.action.SHARE"
+        const val INTENT_ACTION_OPEN = "${BuildConfig.APPLICATION_ID}.action.OPEN"
+        const val INTENT_ACTION_UPDATE = "${BuildConfig.APPLICATION_ID}.action.UPDATE"
 
         fun createIntent(
                 context: Context,
@@ -90,7 +90,8 @@ class BingImageOfTheDayBroadcastReceiver : BroadcastReceiver() {
                             }
                         }
                         Intent(Intent.ACTION_SEND).apply {
-                            val shareUri = FileProvider.getUriForFile(context, "de.devmil.muzei.bingimageoftheday.ImageFileProvider", cacheFile)
+                            val shareUri = FileProvider.getUriForFile(context,
+                                    BuildConfig.BING_IMAGE_OF_THE_DAY_FILE_PROVIDER_AUTHORITY, cacheFile)
                             putExtra(Intent.EXTRA_TEXT, shareMessageBuilder.toString())
                             putExtra(Intent.EXTRA_STREAM, shareUri)
                             clipData = ClipData(shareMessageBuilder.toString(), arrayOf("image/*"), ClipData.Item(shareUri))

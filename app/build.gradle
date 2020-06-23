@@ -14,10 +14,6 @@ android {
 
         archivesBaseName = "muzei_biot-v${defaultConfig.versionName}-${buildTime()}"
 
-        def bingImageOfTheDayAuthorityValue = "de.devmil.muzei.bingimageoftheday.provider.BingImageOfTheDayArtSource"
-        manifestPlaceholders = [bingImageOfTheDayAuthority: bingImageOfTheDayAuthorityValue]
-        buildConfigField "String", "BING_IMAGE_OF_THE_DAY_AUTHORITY", "\"${bingImageOfTheDayAuthorityValue}\""
-
         multiDexEnabled true
 
     }
@@ -39,6 +35,8 @@ android {
     }
     buildTypes {
         debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -52,6 +50,18 @@ android {
                 signingConfig signingConfigs.release
             }
         }
+    }
+
+    applicationVariants.all { variant ->
+        def bingImageOfTheDayAuthorityValue = "${applicationId}.provider"
+        def bingImageOfTheDayFileProviderAuthorityValue = "${applicationId}.fileprovider"
+
+        def mergedFlavor = variant.getMergedFlavor()
+        mergedFlavor.manifestPlaceholders = [bingImageOfTheDayAuthority: bingImageOfTheDayAuthorityValue,
+                                             bingImageOfTheDayFileProviderAuthority: bingImageOfTheDayFileProviderAuthorityValue]
+
+        variant.buildConfigField "String", "BING_IMAGE_OF_THE_DAY_AUTHORITY", "\"${bingImageOfTheDayAuthorityValue}\""
+        variant.buildConfigField "String", "BING_IMAGE_OF_THE_DAY_FILE_PROVIDER_AUTHORITY", "\"${bingImageOfTheDayFileProviderAuthorityValue}\""
     }
 
     lintOptions {

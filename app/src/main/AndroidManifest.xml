@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="de.devmil.muzei.bingimageoftheday.SettingsActivity"
+            android:name=".SettingsActivity"
             android:exported="true"
             android:label="@string/app_name" >
         </activity>
@@ -29,7 +29,7 @@
         </activity>
 
         <service
-            android:name="de.devmil.muzei.bingimageoftheday.BingImageOfTheDayArtSource"
+            android:name=".BingImageOfTheDayArtSource"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.apps.muzei.api.MuzeiArtSource"/>
@@ -41,7 +41,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="de.devmil.muzei.bingimageoftheday.ImageFileProvider"
+            android:authorities="${bingImageOfTheDayFileProviderAuthority}"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -50,7 +50,7 @@
         </provider>
 
         <provider
-            android:name="de.devmil.muzei.bingimageoftheday.BingImageOfTheDayArtProvider"
+            android:name=".BingImageOfTheDayArtProvider"
             android:authorities="${bingImageOfTheDayAuthority}"
             android:exported="true"
             android:label="@string/app_name"
@@ -65,7 +65,7 @@
         </provider>
 
         <receiver
-            android:name="de.devmil.muzei.bingimageoftheday.BingImageOfTheDayBroadcastReceiver"
+            android:name=".BingImageOfTheDayBroadcastReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

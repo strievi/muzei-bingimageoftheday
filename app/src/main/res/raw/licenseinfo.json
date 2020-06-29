@@ -7,22 +7,6 @@
       "url": "https://github.com/square/retrofit",
       "copyright": "Copyright (C) 2013 Square, Inc.",
       "icon": "license_square"
-    },
-    {
-      "name": "Event Bus",
-      "vendor": "Greenrobot",
-      "license": "apache-v2",
-      "url": "https://github.com/greenrobot/EventBus",
-      "copyright": "Copyright (C) 2012 Markus Junginger, greenrobot (http://greenrobot.de)",
-      "icon": "license_greenrobot"
-    },
-    {
-      "name": "Volley",
-      "vendor": "Android Open Source Project",
-      "license": "apache-v2",
-      "url": "https://android.googlesource.com/platform/frameworks/volley",
-      "copyright": "Copyright (C) 2011 The Android Open Source Project",
-      "icon": "license_aosp"
     }
   ],
   "license": [

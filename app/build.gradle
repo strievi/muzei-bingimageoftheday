@@ -12,7 +12,7 @@ android {
         versionCode 8
         versionName "1.7"
 
-        archivesBaseName = "muzei_biot-v${defaultConfig.versionName}-${buildTime()}"
+        archivesBaseName = "muzei-bingimageoftheday-v${defaultConfig.versionName}"
 
         multiDexEnabled true
 
@@ -82,10 +82,6 @@ dependencies {
 }
 repositories {
     mavenCentral()
-}
-
-def buildTime() {
-    return new Date().format("yyyyMMdd")
 }
 
 buildscript {

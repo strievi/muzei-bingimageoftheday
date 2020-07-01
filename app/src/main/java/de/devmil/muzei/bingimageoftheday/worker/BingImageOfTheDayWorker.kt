@@ -20,19 +20,21 @@ class BingImageOfTheDayWorker(
         internal fun enqueueLoad() {
             LogUtil.LOGD(TAG, "Received enqueue request")
             val workManager = WorkManager.getInstance()
-            workManager.enqueue(OneTimeWorkRequestBuilder<BingImageOfTheDayWorker>()
-                    .setConstraints(Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
+            workManager.beginUniqueWork(
+                    TAG,
+                    ExistingWorkPolicy.REPLACE,
+                    OneTimeWorkRequestBuilder<BingImageOfTheDayWorker>()
+                            .setConstraints(Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build())
                             .build())
-                    .build())
+                    .enqueue()
         }
-
-        private val lockObject = Object()
     }
 
     override fun doWork(): Result {
         LogUtil.LOGD(TAG, "Starting background work")
-        synchronized(lockObject) {
+        try {
             val settings = Settings(applicationContext)
             val isPortrait = settings.isOrientationPortrait
             val market = settings.bingMarket
@@ -41,12 +43,7 @@ class BingImageOfTheDayWorker(
                     BingImageDimension.HD,
                     isPortrait
             )
-            val imagesMetadata = try {
-                retriever.bingImageOfTheDayMetadata ?: listOf()
-            } catch (e: Exception) {
-                LogUtil.LOGE(TAG, "Error querying Bing API", e)
-                return Result.RETRY
-            }
+            val imagesMetadata = retriever.bingImageOfTheDayMetadata ?: listOf()
             if (imagesMetadata.isEmpty()) {
                 LogUtil.LOGW(TAG, "Bing API returned no result")
                 return Result.FAILURE
@@ -74,6 +71,10 @@ class BingImageOfTheDayWorker(
                 }
             }
             return Result.SUCCESS
+        } catch (e: Exception) {
+            LogUtil.LOGE(TAG, "Error executing background work", e)
+            return Result.RETRY
         }
+
     }
 }

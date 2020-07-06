@@ -24,14 +24,15 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
         fun doUpdate(context: Context) {
             LogUtil.LOGD(TAG, "Received update request")
             if (MuzeiContract.Sources.isProviderSelected(context, BING_IMAGE_OF_THE_DAY_AUTHORITY)) {
-                BingImageOfTheDayWorker.enqueueLoad()
+                BingImageOfTheDayWorker.enqueueLoad(context)
             }
         }
     }
 
     override fun onLoadRequested(initial: Boolean) {
         LogUtil.LOGD(TAG, "Received load request")
-        BingImageOfTheDayWorker.enqueueLoad()
+        val context = context ?: return
+        BingImageOfTheDayWorker.enqueueLoad(context)
     }
 
     override fun openFile(artwork: Artwork): InputStream {

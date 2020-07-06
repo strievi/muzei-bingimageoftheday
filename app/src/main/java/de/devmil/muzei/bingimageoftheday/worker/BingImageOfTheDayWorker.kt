@@ -17,10 +17,10 @@ class BingImageOfTheDayWorker(
     companion object {
         private val TAG = BingImageOfTheDayWorker::class.java.simpleName
 
-        internal fun enqueueLoad() {
+        internal fun enqueueLoad(context: Context) {
             LogUtil.LOGD(TAG, "Received enqueue request")
-            val workManager = WorkManager.getInstance()
-            workManager.beginUniqueWork(
+            val workManager = WorkManager.getInstance(context)
+            workManager.enqueueUniqueWork(
                     TAG,
                     ExistingWorkPolicy.REPLACE,
                     OneTimeWorkRequestBuilder<BingImageOfTheDayWorker>()
@@ -28,7 +28,6 @@ class BingImageOfTheDayWorker(
                                     .setRequiredNetworkType(NetworkType.CONNECTED)
                                     .build())
                             .build())
-                    .enqueue()
         }
     }
 
@@ -46,7 +45,7 @@ class BingImageOfTheDayWorker(
             val imagesMetadata = retriever.bingImageOfTheDayMetadata ?: listOf()
             if (imagesMetadata.isEmpty()) {
                 LogUtil.LOGW(TAG, "Bing API returned no result")
-                return Result.FAILURE
+                return Result.failure()
             }
             imagesMetadata.maxBy { it.fullStartDate!! }?.let { latestMetadata ->
                 ProviderContract.getProviderClient(
@@ -70,10 +69,10 @@ class BingImageOfTheDayWorker(
                     }
                 }
             }
-            return Result.SUCCESS
+            return Result.success()
         } catch (e: Exception) {
             LogUtil.LOGE(TAG, "Error executing background work", e)
-            return Result.RETRY
+            return Result.retry()
         }
 
     }

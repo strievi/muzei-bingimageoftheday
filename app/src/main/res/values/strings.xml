@@ -3,7 +3,8 @@
     <string name="app_name">Muzei - Bing Image of the Day</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="source_description">Bing Image of the Day</string>
+    <string name="source_label">Bing image of the day</string>
+    <string name="source_description">A new image every day</string>
     <string name="setting_landscape">Landscape</string>
     <string name="setting_portrait">Portrait</string>
     <string name="fragment_settings_orientation_label">Orientation</string>

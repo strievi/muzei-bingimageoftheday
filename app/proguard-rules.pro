@@ -1,8 +1,11 @@
+# To enable ProGuard in your project, edit project.properties
+# to define the proguard.config property as described in that file.
+#
 # Add project specific ProGuard rules here.
 # By default, the flags in this file are appended to flags specified
-# in /Users/Shared/android-sdk/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
+# in ${sdk.dir}/tools/proguard/proguard-android.txt
+# You can edit the include path and order by changing the ProGuard
+# include property in project.properties.
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
@@ -16,22 +19,17 @@
 #   public *;
 #}
 
--keep public class * extends android.app,backup.BackupAgent
+# From: https://github.com/romannurik/muzei/blob/c2422d2ff99e56068182667667523aac7940babc/main/proguard-project.txt
 
-# okio
+-keep public class * extends android.app.backup.BackupAgent
 
+-dontobfuscate
+
+# okhttp
+
+-dontwarn okhttp3.**
 -dontwarn okio.**
-
-# retrofit
--keepattributes Signature
--keepattributes *Annotation*
--keep class com.squareup.okhttp.** { *; }
--keep interface com.squareup.okhttp.** { *; }
--dontwarn com.squareup.okhttp.**
-
--dontwarn rx.**
--dontwarn retrofit.**
--keep class retrofit.** { *; }
--keepclasseswithmembers class * {
-    @retrofit.http.* <methods>;
-}
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase

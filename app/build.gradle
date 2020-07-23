@@ -78,7 +78,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation 'com.google.android.apps.muzei:muzei-api:3.4.0-alpha03'
+    implementation 'com.google.android.apps.muzei:muzei-api:3.4.0'
     implementation "androidx.core:core-ktx:$rootProject.ext.ktxVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.ext.coroutinesVersion"
     implementation "androidx.work:work-runtime-ktx:$rootProject.ext.workManagerVersion"

@@ -92,8 +92,7 @@ class SettingsActivity : Activity() {
                     return@OnCheckedChangeListener
                 val isPortrait = compoundButton === rbPortrait
                 settings.isOrientationPortrait = isPortrait
-                BingImageOfTheDayBroadcastReceiver.createIntent(
-                        activity, BingImageOfTheDayBroadcastReceiver.INTENT_ACTION_UPDATE).also { intent ->
+                Intent(activity, BingImageOfTheDayUpdateReceiver::class.java).also { intent ->
                     activity.sendBroadcast(intent)
                 }
             }
@@ -105,8 +104,7 @@ class SettingsActivity : Activity() {
                     val market = marketAdapter!!.getItem(i) ?: Settings.DEFAULT_MARKET
                     if (market.marketCode != settings.bingMarket.marketCode) {
                         settings.bingMarket = market
-                        BingImageOfTheDayBroadcastReceiver.createIntent(
-                                activity, BingImageOfTheDayBroadcastReceiver.INTENT_ACTION_UPDATE).also { intent ->
+                        Intent(activity, BingImageOfTheDayUpdateReceiver::class.java).also { intent ->
                             activity.sendBroadcast(intent)
                         }
                     }

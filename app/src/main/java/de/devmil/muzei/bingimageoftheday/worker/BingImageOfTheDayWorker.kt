@@ -62,9 +62,7 @@ class BingImageOfTheDayWorker(
                             LogUtil.LOGD(TAG, "Dropping artwork with token=${artwork.token}")
                         } else {
                             LogUtil.LOGD(TAG, "Setting artwork with token=${artwork.token}")
-                            setArtwork(artwork)?.let {
-                                context.cacheDir?.resolve("images")?.deleteRecursively()
-                            }
+                            setArtwork(artwork)
                         }
                     }
                 }

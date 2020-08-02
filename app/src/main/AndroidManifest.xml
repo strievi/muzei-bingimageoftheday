@@ -37,13 +37,10 @@
         </service>
 
         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${bingImageOfTheDayFileProviderAuthority}"
-            android:exported="false"
+            android:name=".BingImageOfTheDayContentProvider"
+            android:authorities="${bingImageOfTheDayContentProviderAuthority}"
+            android:exported="true"
             android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
         </provider>
 
         <provider
@@ -72,7 +69,7 @@
         </provider>
 
         <receiver
-            android:name=".BingImageOfTheDayBroadcastReceiver"
+            android:name=".BingImageOfTheDayUpdateReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

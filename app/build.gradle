@@ -53,14 +53,14 @@ android {
 
     applicationVariants.all { variant ->
         def bingImageOfTheDayAuthorityValue = "${applicationId}.provider"
-        def bingImageOfTheDayFileProviderAuthorityValue = "${applicationId}.fileprovider"
+        def bingImageOfTheDayContentProviderAuthorityValue = "${applicationId}.contentprovider"
 
         def mergedFlavor = variant.getMergedFlavor()
         mergedFlavor.manifestPlaceholders = [bingImageOfTheDayAuthority: bingImageOfTheDayAuthorityValue,
-                                             bingImageOfTheDayFileProviderAuthority: bingImageOfTheDayFileProviderAuthorityValue]
+                                             bingImageOfTheDayContentProviderAuthority: bingImageOfTheDayContentProviderAuthorityValue]
 
         variant.buildConfigField "String", "BING_IMAGE_OF_THE_DAY_AUTHORITY", "\"${bingImageOfTheDayAuthorityValue}\""
-        variant.buildConfigField "String", "BING_IMAGE_OF_THE_DAY_FILE_PROVIDER_AUTHORITY", "\"${bingImageOfTheDayFileProviderAuthorityValue}\""
+        variant.buildConfigField "String", "BING_IMAGE_OF_THE_DAY_CONTENT_PROVIDER_AUTHORITY", "\"${bingImageOfTheDayContentProviderAuthorityValue}\""
     }
 
     lintOptions {
@@ -80,7 +80,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'com.google.android.apps.muzei:muzei-api:3.4.0'
     implementation "androidx.core:core-ktx:$rootProject.ext.ktxVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.ext.coroutinesVersion"
     implementation "androidx.work:work-runtime-ktx:$rootProject.ext.workManagerVersion"
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'

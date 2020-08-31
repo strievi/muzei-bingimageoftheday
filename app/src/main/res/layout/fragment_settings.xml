@@ -78,7 +78,7 @@
             android:id="@+id/fragment_settings_button_license"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/fragment_settings_button_license_label"
+            android:text="@string/license_info_label"
             android:textAllCaps="true"
             android:textAppearance="?android:textAppearanceLarge"
             android:layout_below="@id/fragment_settings_market"

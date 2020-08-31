@@ -22,7 +22,7 @@
         <activity
             android:name=".LicenseInfoActivity"
             android:exported="false"
-            android:label="@string/license_info_activity_label">
+            android:label="@string/license_info_label">
         </activity>
 
         <service

@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Muzei - Bing Image of the Day</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Paramètres</string>
     <string name="source_label">Image Bing du jour</string>
     <string name="source_description">Une nouvelle image chaque jour</string>
     <string name="setting_landscape">Paysage</string>
     <string name="setting_portrait">Portrait</string>
     <string name="fragment_settings_orientation_label">Orientation</string>
     <string name="fragment_settings_market_label">Marché</string>
-    <string name="fragment_settings_button_license_label">À propos</string>
     <string name="copyright">© 2017 Devmil Solutions - Michael Lamers</string>
     <string name="activity_license_info_license_info_headline">Informations de licence</string>
-    <string name="license_info_activity_label">À propos</string>
+    <string name="license_info_label">À propos</string>
     <string name="command_share_title">Partager l\'œuvre</string>
     <string name="command_open_title">Ouvrir l\'URL de l\'œuvre</string>
-    <string name="command_share_error">Impossible de partager l\'œuvre.</string>
-    <string name="command_open_error">Impossible d\'ouvrir l\'URL de l\'œuvre.</string>
 
     <string name="mkt_unknown">Aléatoire</string>
     <string name="mkt_ar_SA">Arabe – Arabie Saoudite</string>

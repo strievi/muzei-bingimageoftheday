@@ -55,7 +55,7 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
                 } else {
                     append("${artwork.title} - ${artwork.byline}")
                 }
-                append(" #BingImageOfTheDay")
+                append(" ${context.getString(R.string.share_message_hashtag)}")
                 if (artwork.webUri != null) {
                     append("\n\n${artwork.webUri}")
                 }

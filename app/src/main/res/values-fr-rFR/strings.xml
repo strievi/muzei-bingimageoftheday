@@ -12,6 +12,7 @@
     <string name="license_info_label">À propos</string>
     <string name="command_share_title">Partager l\'œuvre</string>
     <string name="command_open_title">Ouvrir l\'URL de l\'œuvre</string>
+    <string name="share_message_hashtag">#ImageBingDuJour</string>
 
     <string name="mkt_unknown">Aléatoire</string>
     <string name="mkt_ar_SA">Arabe – Arabie Saoudite</string>

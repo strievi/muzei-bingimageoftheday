@@ -12,6 +12,7 @@
     <string name="license_info_label">About</string>
     <string name="command_share_title">Share artwork</string>
     <string name="command_open_title">Open artwork URL</string>
+    <string name="share_message_hashtag">#BingImageOfTheDay</string>
 
     <string name="mkt_unknown">Random</string>
     <string name="mkt_ar_SA">Arabic – Saudi Arabia</string>

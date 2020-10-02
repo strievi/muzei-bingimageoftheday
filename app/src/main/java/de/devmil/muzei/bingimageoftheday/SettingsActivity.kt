@@ -26,14 +26,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.CompoundButton
-import android.widget.ImageView
-import android.widget.RadioButton
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 
 class SettingsActivity : Activity() {
 
@@ -64,49 +57,66 @@ class SettingsActivity : Activity() {
 
     class SettingsFragment : Fragment() {
 
-        private var rbLandscape: RadioButton? = null
-        private var rbPortrait: RadioButton? = null
-        private var spMarket: Spinner? = null
-        private var marketAdapter: ArrayAdapter<BingMarket>? = null
-        private var btnLicense: Button? = null
+        private lateinit var rgOrientation: RadioGroup
+        private lateinit var spMarket: Spinner
+        private lateinit var cbAutoMarket: CheckBox
+        private lateinit var marketAdapter: ArrayAdapter<BingMarket>
+        private lateinit var btnLicense: Button
+        private lateinit var settings: Settings
+        private var spCurrentSelected: Int = 0
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
+            settings = Settings(activity)
             val rootView = inflater.inflate(R.layout.fragment_settings, container, false)
-            rbLandscape = rootView.findViewById(R.id.fragment_settings_orientation_landscape) as RadioButton
-            rbPortrait = rootView.findViewById(R.id.fragment_settings_orientation_portrait) as RadioButton
+            rgOrientation = rootView.findViewById(R.id.fragment_settings_orientation) as RadioGroup
             spMarket = rootView.findViewById(R.id.fragment_settings_market) as Spinner
+            cbAutoMarket = rootView.findViewById(R.id.fragment_settings_automarket) as CheckBox
             marketAdapter = MarketAdapter(activity, R.layout.settings_ab_spinner_list_item_dropdown, BingMarket.selectableValues())
-            spMarket!!.adapter = marketAdapter
-            spMarket!!.setSelection(GetMarketSpinnerSelection())
+            spMarket.adapter = marketAdapter
             btnLicense = rootView.findViewById(R.id.fragment_settings_button_license) as Button
 
-            val settings = Settings(activity)
-            val portrait = settings.isOrientationPortrait
+            rgOrientation.check(if (settings.isOrientationPortrait) R.id.fragment_settings_orientation_portrait else R.id.fragment_settings_orientation_landscape)
+            cbAutoMarket.isChecked = settings.isAutoMarket
+            spMarket.isEnabled = !settings.isAutoMarket
+            spCurrentSelected = getMarketSpinnerSelection()
 
-            rbLandscape!!.isChecked = !portrait
-            rbPortrait!!.isChecked = portrait
-
-            val listener = CompoundButton.OnCheckedChangeListener { compoundButton, checked ->
-                if (!checked)
-                    return@OnCheckedChangeListener
-                val isPortrait = compoundButton === rbPortrait
-                settings.isOrientationPortrait = isPortrait
+            rgOrientation.setOnCheckedChangeListener { _, id ->
+                when (id) {
+                    R.id.fragment_settings_orientation_portrait -> {
+                        settings.isOrientationPortrait = true
+                    }
+                    R.id.fragment_settings_orientation_landscape -> {
+                        settings.isOrientationPortrait = false
+                    }
+                    else -> return@setOnCheckedChangeListener
+                }
                 Intent(activity, BingImageOfTheDayUpdateReceiver::class.java).also { intent ->
                     activity.sendBroadcast(intent)
                 }
             }
 
-            rbLandscape!!.setOnCheckedChangeListener(listener)
-            rbPortrait!!.setOnCheckedChangeListener(listener)
-            spMarket!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            cbAutoMarket.setOnCheckedChangeListener { _, checked ->
+                settings.isAutoMarket = checked
+                spMarket.isEnabled = !checked
+                if (checked) {
+                    if (settings.bingMarket.marketCode != settings.marketCode) {
+                        spMarket.setSelection(getMarketSpinnerSelection())
+                    }
+                } else {
+                    settings.marketCode = marketAdapter.getItem(spCurrentSelected)!!.marketCode
+                }
+            }
+
+            spMarket.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
-                    val market = marketAdapter!!.getItem(i) ?: Settings.DEFAULT_MARKET
-                    if (market.marketCode != settings.bingMarket.marketCode) {
-                        settings.bingMarket = market
+                    if (spCurrentSelected != i) {
+                        val market = marketAdapter.getItem(i) ?: settings.bingMarket
+                        settings.marketCode = market.marketCode
                         Intent(activity, BingImageOfTheDayUpdateReceiver::class.java).also { intent ->
                             activity.sendBroadcast(intent)
                         }
+                        spCurrentSelected = i
                     }
                 }
 
@@ -115,23 +125,23 @@ class SettingsActivity : Activity() {
                 }
             }
 
-            val context = inflater.context
-
-            btnLicense!!.setOnClickListener {
-                val licenseActivityIntent = Intent(context, LicenseInfoActivity::class.java)
+            btnLicense.setOnClickListener {
+                val licenseActivityIntent = Intent(activity, LicenseInfoActivity::class.java)
                 startActivity(licenseActivityIntent)
             }
 
             return rootView
         }
 
-        private fun GetMarketSpinnerSelection(): Int {
-            val settings = Settings(activity)
+        override fun onViewStateRestored(savedInstanceState: Bundle?) {
+            super.onViewStateRestored(savedInstanceState)
+            spMarket.setSelection(spCurrentSelected)
+        }
 
+        private fun getMarketSpinnerSelection(): Int {
             val marketCode = settings.bingMarket.marketCode
-
-            return (0 until marketAdapter!!.count)
-                        .firstOrNull { marketAdapter!!.getItem(it)!!.marketCode == marketCode }
+            return (0 until marketAdapter.count)
+                    .firstOrNull { marketAdapter.getItem(it)!!.marketCode == marketCode }
                     ?: 0
         }
     }
@@ -139,8 +149,8 @@ class SettingsActivity : Activity() {
     internal class MarketAdapter(context: Context, resource: Int, objects: Array<BingMarket>) : ArrayAdapter<BingMarket>(context, resource, objects) {
 
         internal class ViewHolder {
-            var textView: TextView? = null
-            var imageView: ImageView? = null
+            lateinit var textView: TextView
+            lateinit var imageView: ImageView
         }
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -155,7 +165,7 @@ class SettingsActivity : Activity() {
             if (effectiveConvertView == null) {
                 effectiveConvertView = LayoutInflater.from(context).inflate(R.layout.settings_ab_spinner_list_item_dropdown, null)
                 holder = ViewHolder()
-                holder.imageView = effectiveConvertView!!.findViewById(R.id.settings_ab_spinner_list_item_dropdown_icon) as ImageView
+                holder.imageView = effectiveConvertView.findViewById(R.id.settings_ab_spinner_list_item_dropdown_icon) as ImageView
                 holder.textView = effectiveConvertView.findViewById(R.id.settings_ab_spinner_list_item_dropdown_text) as TextView
                 effectiveConvertView.tag = holder
             } else {
@@ -164,10 +174,10 @@ class SettingsActivity : Activity() {
 
             val market = getItem(position)
 
-            holder.textView!!.text = market!!.toString()
-            holder.imageView!!.setImageResource(market.logoResourceId)
+            holder.textView.text = market!!.toString()
+            holder.imageView.setImageResource(market.logoResourceId)
 
-            return effectiveConvertView
+            return effectiveConvertView!!
         }
     }
 }

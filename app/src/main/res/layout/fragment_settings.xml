@@ -30,7 +30,7 @@
         />
         <RadioGroup
             android:layout_marginTop="20dp"
-            android:id="@+id/rbg_orientation"
+            android:id="@+id/fragment_settings_orientation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/fragment_settings_orientation_label"
@@ -58,7 +58,7 @@
             android:id="@+id/fragment_settings_market_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/rbg_orientation"
+            android:layout_below="@id/fragment_settings_orientation"
             android:layout_marginTop="20dp"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="@string/fragment_settings_market_label"
@@ -67,13 +67,23 @@
             android:textColor="#fff"
             android:textStyle="bold"
             />
+        <CheckBox
+            android:layout_marginTop="20dp"
+            android:id="@+id/fragment_settings_automarket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fragment_settings_market_label"
+            android:text="@string/fragment_settings_automarket"
+            android:fontFamily="sans-serif-condensed"
+            android:textAllCaps="true"
+            android:textColor="#fff"
+            android:textStyle="bold" />
         <Spinner
             android:id="@+id/fragment_settings_market"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/fragment_settings_market_label"
+            android:layout_below="@id/fragment_settings_automarket"
             android:layout_marginTop="0dp"/>
-
         <Button
             android:id="@+id/fragment_settings_button_license"
             android:layout_width="wrap_content"

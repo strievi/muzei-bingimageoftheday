@@ -20,7 +20,6 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
         private val TAG = BingImageOfTheDayArtProvider::class.java.simpleName
 
         private const val COMMAND_ID_SHARE = 2
-        private const val COMMAND_ID_OPEN = 3
 
         fun doUpdate(context: Context) {
             LogUtil.LOGD(TAG, "Received update request")
@@ -71,12 +70,6 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
                 context.getString(R.string.command_share_title))
     }
 
-    private fun createOpenIntent(context: Context, artwork: Artwork): Intent {
-        return Intent(Intent.ACTION_VIEW, artwork.persistentUri).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-    }
-
     override fun getCommandActions(artwork: Artwork): List<RemoteActionCompat> {
         val context = context ?: return super.getCommandActions(artwork)
         return listOfNotNull(
@@ -88,15 +81,6 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
                                 createShareIntent(context, artwork),
                                 PendingIntent.FLAG_UPDATE_CURRENT)).apply {
                     setShouldShowIcon(true)
-                },
-                RemoteActionCompat(
-                        IconCompat.createWithResource(context, R.drawable.ic_open),
-                        context.getString(R.string.command_open_title),
-                        "",
-                        PendingIntent.getActivity(context, artwork.id.toInt(),
-                                createOpenIntent(context, artwork),
-                                PendingIntent.FLAG_UPDATE_CURRENT)).apply {
-                    setShouldShowIcon(true)
                 }
         )
     }
@@ -104,15 +88,13 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
     override fun getCommands(artwork: Artwork): List<UserCommand> {
         val context = context ?: return super.getCommands(artwork)
         return listOfNotNull(
-                UserCommand(COMMAND_ID_SHARE, context.getString(R.string.command_share_title)),
-                UserCommand(COMMAND_ID_OPEN, context.getString(R.string.command_open_title)))
+                UserCommand(COMMAND_ID_SHARE, context.getString(R.string.command_share_title)))
     }
 
     override fun onCommand(artwork: Artwork, id: Int) {
         val context = context ?: return super.onCommand(artwork, id)
         when (id) {
             COMMAND_ID_SHARE -> context.startActivity(createShareIntent(context, artwork))
-            COMMAND_ID_OPEN -> context.startActivity(createOpenIntent(context, artwork))
         }
     }
 }

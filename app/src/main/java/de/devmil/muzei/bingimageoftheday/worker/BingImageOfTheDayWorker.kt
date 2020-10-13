@@ -48,19 +48,18 @@ class BingImageOfTheDayWorker(
                 return Result.failure()
             }
             imagesMetadata.maxBy { it.fullStartDate!! }?.let { latestMetadata ->
+                val latestToken = "${latestMetadata.fullStartDate}-${market.marketCode}-${isPortrait}"
                 ProviderContract.getProviderClient(
                         applicationContext, BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
-                    Artwork(
-                            token = "${latestMetadata.fullStartDate}-${market.marketCode}-${isPortrait}",
-                            attribution = "bing.com",
-                            title = latestMetadata.title ?: "",
-                            byline = latestMetadata.copyright ?: "",
-                            persistentUri = latestMetadata.uri,
-                            webUri = if (URLUtil.isNetworkUrl(latestMetadata.copyrightLink)) Uri.parse(latestMetadata.copyrightLink) else null,
-                            metadata = latestMetadata.uri.toString().substringAfterLast("id=OHR.")).let { artwork ->
-                        if (lastAddedArtwork?.token.equals(artwork.token)) {
-                            LogUtil.LOGD(TAG, "Dropping artwork with token=${artwork.token}")
-                        } else {
+                    if (!lastAddedArtwork?.token.equals(latestToken)) {
+                        Artwork(
+                                token = latestToken,
+                                attribution = "bing.com",
+                                title = latestMetadata.title ?: "",
+                                byline = latestMetadata.copyright ?: "",
+                                persistentUri = latestMetadata.uri,
+                                webUri = if (URLUtil.isNetworkUrl(latestMetadata.copyrightLink)) Uri.parse(latestMetadata.copyrightLink) else null,
+                                metadata = latestMetadata.uri.toString().substringAfterLast("id=OHR.")).let { artwork ->
                             LogUtil.LOGD(TAG, "Setting artwork with token=${artwork.token}")
                             setArtwork(artwork)
                         }
@@ -72,6 +71,5 @@ class BingImageOfTheDayWorker(
             LogUtil.LOGE(TAG, "Error executing background work", e)
             return Result.retry()
         }
-
     }
 }

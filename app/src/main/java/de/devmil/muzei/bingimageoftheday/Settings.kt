@@ -54,12 +54,19 @@ class Settings(private val context: Context) {
             preferences.edit().putBoolean(PREF_AUTO_MARKET, isAutoMarket).apply()
         }
 
+    var isCropImage: Boolean
+        get() = preferences.getBoolean(PREF_CROP_IMAGE, false)
+        set(isCropImage) {
+            preferences.edit().putBoolean(PREF_CROP_IMAGE, isCropImage).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "BingImageOfTheDay"
 
         private const val PREF_AUTO_MARKET = "art_source_settings_auto_market"
         private const val PREF_MARKET_CODE = "art_source_settings_market_code"
         private const val PREF_ORIENTATION_PORTRAIT = "art_source_settings_orientation_portrait"
+        private const val PREF_CROP_IMAGE = "art_source_settings_crop_image"
 
         private val DEFAULT_MARKET = BingMarket.EN_US
 

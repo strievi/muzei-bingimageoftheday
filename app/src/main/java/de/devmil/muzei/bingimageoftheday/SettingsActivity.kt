@@ -61,6 +61,7 @@ class SettingsActivity : Activity() {
         private lateinit var spMarket: Spinner
         private lateinit var cbAutoMarket: CheckBox
         private lateinit var marketAdapter: ArrayAdapter<BingMarket>
+        private lateinit var cbCropImage: CheckBox
         private lateinit var btnLicense: Button
         private lateinit var settings: Settings
         private var spCurrentSelected: Int = 0
@@ -72,12 +73,14 @@ class SettingsActivity : Activity() {
             rgOrientation = rootView.findViewById(R.id.fragment_settings_orientation) as RadioGroup
             spMarket = rootView.findViewById(R.id.fragment_settings_market) as Spinner
             cbAutoMarket = rootView.findViewById(R.id.fragment_settings_automarket) as CheckBox
+            cbCropImage = rootView.findViewById(R.id.fragment_settings_crop_image) as CheckBox
             marketAdapter = MarketAdapter(activity, R.layout.settings_ab_spinner_list_item_dropdown, BingMarket.selectableValues())
             spMarket.adapter = marketAdapter
             btnLicense = rootView.findViewById(R.id.fragment_settings_button_license) as Button
 
             rgOrientation.check(if (settings.isOrientationPortrait) R.id.fragment_settings_orientation_portrait else R.id.fragment_settings_orientation_landscape)
             cbAutoMarket.isChecked = settings.isAutoMarket
+            cbCropImage.isChecked = settings.isCropImage
             spMarket.isEnabled = !settings.isAutoMarket
             spCurrentSelected = getMarketSpinnerSelection()
 
@@ -122,6 +125,13 @@ class SettingsActivity : Activity() {
 
                 override fun onNothingSelected(adapterView: AdapterView<*>) {
 
+                }
+            }
+
+            cbCropImage.setOnCheckedChangeListener { _, checked ->
+                settings.isCropImage = checked
+                Intent(activity, BingImageOfTheDayUpdateReceiver::class.java).also { intent ->
+                    activity.sendBroadcast(intent)
                 }
             }
 

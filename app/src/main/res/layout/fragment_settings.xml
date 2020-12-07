@@ -84,6 +84,30 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/fragment_settings_automarket"
             android:layout_marginTop="0dp"/>
+        <TextView
+            android:id="@+id/fragment_settings_advanced_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fragment_settings_market"
+            android:layout_marginTop="20dp"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:text="@string/fragment_settings_advanced_label"
+            android:fontFamily="sans-serif-condensed"
+            android:textAllCaps="true"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            />
+        <CheckBox
+            android:layout_marginTop="20dp"
+            android:id="@+id/fragment_settings_crop_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fragment_settings_advanced_label"
+            android:text="@string/fragment_settings_crop_image"
+            android:fontFamily="sans-serif-condensed"
+            android:textAllCaps="true"
+            android:textColor="#fff"
+            android:textStyle="bold" />
         <Button
             android:id="@+id/fragment_settings_button_license"
             android:layout_width="wrap_content"
@@ -91,7 +115,7 @@
             android:text="@string/license_info_label"
             android:textAllCaps="true"
             android:textAppearance="?android:textAppearanceLarge"
-            android:layout_below="@id/fragment_settings_market"
+            android:layout_below="@id/fragment_settings_crop_image"
             android:layout_marginTop="20dp"/>
     </RelativeLayout>
 </ScrollView>

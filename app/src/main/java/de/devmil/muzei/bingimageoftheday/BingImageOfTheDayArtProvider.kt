@@ -2,7 +2,12 @@ package de.devmil.muzei.bingimageoftheday
 
 import android.app.PendingIntent
 import android.content.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.ThumbnailUtils
 import android.net.Uri
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import androidx.core.app.RemoteActionCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.google.android.apps.muzei.api.MuzeiContract
@@ -12,7 +17,11 @@ import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import de.devmil.common.utils.LogUtil
 import de.devmil.muzei.bingimageoftheday.BuildConfig.BING_IMAGE_OF_THE_DAY_AUTHORITY
 import de.devmil.muzei.bingimageoftheday.worker.BingImageOfTheDayWorker
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.InputStream
+import kotlin.math.roundToInt
 
 class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
 
@@ -21,12 +30,26 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
 
         private const val COMMAND_ID_SHARE = 2
 
+        private var displayAspect: Double = 0.0
+
         fun doUpdate(context: Context) {
             LogUtil.LOGD(TAG, "Received update request")
             if (MuzeiContract.Sources.isProviderSelected(context, BING_IMAGE_OF_THE_DAY_AUTHORITY)) {
                 BingImageOfTheDayWorker.enqueueLoad(context)
             }
         }
+    }
+
+    override fun onCreate(): Boolean {
+        // Compute device display aspect ratio
+        val windowManager = context!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = windowManager.defaultDisplay
+        val displayMetrics = DisplayMetrics()
+        display.getRealMetrics(displayMetrics)
+        displayAspect = displayMetrics.widthPixels.toDouble() / displayMetrics.heightPixels
+        if (displayAspect < 1) displayAspect = 1 / displayAspect
+        LogUtil.LOGD(TAG, "Initializing with device display aspect ratio=$displayAspect")
+        return super.onCreate()
     }
 
     override fun onLoadRequested(initial: Boolean) {
@@ -37,7 +60,39 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
 
     override fun openFile(artwork: Artwork): InputStream {
         LogUtil.LOGD(TAG, "Opening file for artwork with token=${artwork.token}")
-        return super.openFile(artwork)
+        val inputStream = super.openFile(artwork)
+        return (if (artwork.metadata.toString().endsWith("_Cropped.jpg")) {
+            // Crop to match device display aspect ratio
+            var bitmap = BitmapFactory.decodeStream(inputStream)
+            var width = bitmap.width
+            var height = bitmap.height
+            var bitmapAspect = width.toDouble() / height
+            val isPortrait = bitmapAspect < 1
+            if (isPortrait) bitmapAspect = 1 / bitmapAspect
+            if (displayAspect > bitmapAspect) {
+                if (isPortrait) {
+                    width = (height / displayAspect).roundToInt()
+                } else {
+                    height = (width / displayAspect).roundToInt()
+                }
+            } else {
+                if (isPortrait) {
+                    height = (width * displayAspect).roundToInt()
+                } else {
+                    width = (height * displayAspect).roundToInt()
+                }
+            }
+            bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height)
+            val outputStream = ByteArrayOutputStream()
+            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)) {
+                throw IOException("Cannot compress bitmap")
+            }
+            LogUtil.LOGD(TAG, "Cropped bitmap to ${width}x${height}" +
+                    " for artwork with token=${artwork.token}")
+            ByteArrayInputStream(outputStream.toByteArray())
+        } else {
+            inputStream
+        })
     }
 
     private fun createShareIntent(context: Context, artwork: Artwork): Intent {

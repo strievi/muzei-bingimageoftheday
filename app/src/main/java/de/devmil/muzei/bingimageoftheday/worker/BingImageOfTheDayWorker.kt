@@ -37,6 +37,7 @@ class BingImageOfTheDayWorker(
             val settings = Settings(applicationContext)
             val isPortrait = settings.isOrientationPortrait
             val market = settings.bingMarket
+            val isCropImage = settings.isCropImage
             val retriever = BingImageOfTheDayMetadataRetriever(
                     market,
                     BingImageDimension.HD,
@@ -48,10 +49,15 @@ class BingImageOfTheDayWorker(
                 return Result.failure()
             }
             imagesMetadata.maxBy { it.fullStartDate!! }?.let { latestMetadata ->
-                val latestToken = "${latestMetadata.fullStartDate}-${market.marketCode}-${isPortrait}"
+                val latestToken = "${latestMetadata.fullStartDate}-${market.marketCode}-${isPortrait}-${isCropImage}"
                 ProviderContract.getProviderClient(
                         applicationContext, BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
                     if (!lastAddedArtwork?.token.equals(latestToken)) {
+                        val defaultFilename = latestMetadata.uri.toString().substringAfterLast("id=OHR.")
+                        val filename = if (settings.isCropImage)
+                            defaultFilename.removeSuffix(".jpg").plus("_Cropped.jpg")
+                        else
+                            defaultFilename
                         Artwork(
                                 token = latestToken,
                                 attribution = "bing.com",
@@ -59,7 +65,7 @@ class BingImageOfTheDayWorker(
                                 byline = latestMetadata.copyright ?: "",
                                 persistentUri = latestMetadata.uri,
                                 webUri = if (URLUtil.isNetworkUrl(latestMetadata.copyrightLink)) Uri.parse(latestMetadata.copyrightLink) else null,
-                                metadata = latestMetadata.uri.toString().substringAfterLast("id=OHR.")).let { artwork ->
+                                metadata = filename).let { artwork ->
                             LogUtil.LOGD(TAG, "Setting artwork with token=${artwork.token}")
                             setArtwork(artwork)
                         }

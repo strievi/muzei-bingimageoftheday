@@ -16,6 +16,7 @@
 package de.devmil.muzei.bingimageoftheday
 
 import android.net.Uri
+import android.webkit.URLUtil
 import de.devmil.common.utils.LogUtil
 
 import java.util.ArrayList
@@ -44,15 +45,17 @@ class BingImageOfTheDayMetadataRetriever(private val market: BingMarket, private
             if (response?.images == null)
                 return null
 
-            return getMetadata(response.images!!)
+            return getMetadata(response.images)
         }
 
     private fun getMetadata(bingImages: List<IBingImageService.BingImage>): List<BingImageMetadata> {
         val result = ArrayList<BingImageMetadata>()
         for (bingImage in bingImages) {
+            if (bingImage.urlbase.isNullOrBlank()) throw IllegalArgumentException("urlbase cannot be null or blank")
+            if (bingImage.fullstartdate.isNullOrBlank()) throw IllegalArgumentException("fullstartdate cannot be null or blank")
             val uri = Uri.parse(BING_URL + bingImage.urlbase + "_" + dimension.getStringRepresentation(portrait) + ".jpg")
-
-            result.add(BingImageMetadata(uri, bingImage.copyright!!, bingImage.fullstartdate!!, bingImage.copyrightlink!!, bingImage.title!!))
+            val copyrightLink = if (URLUtil.isNetworkUrl(bingImage.copyrightlink)) Uri.parse(bingImage.copyrightlink) else null
+            result.add(BingImageMetadata(uri, bingImage.copyright, bingImage.fullstartdate, copyrightLink, bingImage.title))
         }
         return result
     }
@@ -60,8 +63,8 @@ class BingImageOfTheDayMetadataRetriever(private val market: BingMarket, private
     companion object {
         private val TAG = BingImageOfTheDayMetadataRetriever::class.java.simpleName
 
-        private val BING_URL = "https://www.bing.com"
+        private const val BING_URL = "https://www.bing.com"
 
-        val MAXIMUM_BING_IMAGE_NUMBER = 1
+        private const val MAXIMUM_BING_IMAGE_NUMBER = 1
     }
 }

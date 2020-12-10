@@ -1,8 +1,6 @@
 package de.devmil.muzei.bingimageoftheday.worker
 
 import android.content.Context
-import android.net.Uri
-import android.webkit.URLUtil
 import androidx.work.*
 import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.ProviderContract
@@ -48,7 +46,7 @@ class BingImageOfTheDayWorker(
                 LogUtil.LOGW(TAG, "Bing API returned no result")
                 return Result.failure()
             }
-            imagesMetadata.maxBy { it.fullStartDate!! }?.let { latestMetadata ->
+            imagesMetadata.maxBy { it.fullStartDate }?.let { latestMetadata ->
                 val latestToken = "${latestMetadata.fullStartDate}-${market.marketCode}-${isPortrait}-${isCropImage}"
                 ProviderContract.getProviderClient(
                         applicationContext, BING_IMAGE_OF_THE_DAY_AUTHORITY).run {
@@ -61,10 +59,10 @@ class BingImageOfTheDayWorker(
                         Artwork(
                                 token = latestToken,
                                 attribution = "bing.com",
-                                title = latestMetadata.title ?: "",
-                                byline = latestMetadata.copyright ?: "",
+                                title = latestMetadata.title,
+                                byline = latestMetadata.copyright,
                                 persistentUri = latestMetadata.uri,
-                                webUri = if (URLUtil.isNetworkUrl(latestMetadata.copyrightLink)) Uri.parse(latestMetadata.copyrightLink) else null,
+                                webUri = latestMetadata.copyrightLink,
                                 metadata = filename).let { artwork ->
                             LogUtil.LOGD(TAG, "Setting artwork with token=${artwork.token}")
                             setArtwork(artwork)

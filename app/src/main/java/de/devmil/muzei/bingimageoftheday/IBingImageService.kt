@@ -29,25 +29,24 @@ interface IBingImageService {
     @GET("/HPImageArchive.aspx?format=js&idx=0")
     fun getImageOfTheDayMetadata(@Query("n") number: Int, @Query("mkt") market: String): Call<BingImageResponse>
 
-    class BingImageResponse {
-        internal var images: List<BingImage>? = null
-    }
+    data class BingImageResponse(
+            val images: List<BingImage>?
+    )
 
-    class BingImage {
-        internal var startdate: String? = null
-        internal var fullstartdate: String? = null
-        internal var enddate: String? = null
-        internal var url: String? = null
-        internal var urlbase: String? = null
-        internal var copyright: String? = null
-        internal var copyrightlink: String? = null
-        internal var wp: Boolean = false
-        internal var hsh: String? = null
-        internal var drk: Int = 0
-        internal var top: Int = 0
-        internal var bot: Int = 0
-        internal var walle: String? = null
-        internal var walls: String? = null
-        internal var title: String? = null
-    }
+    data class BingImage(
+            val startdate: String? = null,
+            val fullstartdate: String? = null,
+            val enddate: String? = null,
+            val url: String? = null,
+            val urlbase: String? = null,
+            val copyright: String? = null,
+            val copyrightlink: String? = null,
+            val title: String? = null,
+            val quiz: String? = null,
+            val wp: Boolean? = true,
+            val hsh: String? = null,
+            val drk: Int? = 1,
+            val top: Int? = 1,
+            val bot: Int? = 1
+    )
 }

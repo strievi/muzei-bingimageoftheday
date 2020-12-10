@@ -22,10 +22,10 @@ import android.net.Uri
 
  * This class represents one Bing image containing all data that this app needs
  */
-class BingImageMetadata(uri: Uri, copyright: String, fullStartDateString: String, copyrightLink: String, title: String) {
-    var uri: Uri? = uri
+class BingImageMetadata(uri: Uri, copyright: String?, fullStartDate: String, copyrightLink: Uri?, title: String?) {
+    var uri: Uri = uri
     var copyright: String? = copyright
-    var fullStartDate: String? = fullStartDateString
-    var copyrightLink: String? = copyrightLink
+    var fullStartDate: String = fullStartDate
+    var copyrightLink: Uri? = copyrightLink
     var title: String? = title
 }

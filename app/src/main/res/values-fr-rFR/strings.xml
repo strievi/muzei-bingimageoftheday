@@ -14,7 +14,7 @@
     <string name="activity_license_info_license_info_headline">Informations de licence</string>
     <string name="license_info_label">À propos</string>
     <string name="command_share_title">Partager l\'œuvre</string>
-    <string name="share_message_hashtag">#ImageBingDuJour</string>
+    <string name="command_share_subject">Mon fond d\'écran Bing aujourd\'hui</string>
 
     <string name="mkt_unknown">Aléatoire</string>
     <string name="mkt_ar_SA">Arabe – Arabie Saoudite</string>

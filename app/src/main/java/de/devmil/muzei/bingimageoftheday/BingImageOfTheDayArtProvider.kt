@@ -101,25 +101,24 @@ class BingImageOfTheDayArtProvider : MuzeiArtProvider() {
                     .scheme(ContentResolver.SCHEME_CONTENT)
                     .authority(BuildConfig.BING_IMAGE_OF_THE_DAY_CONTENT_PROVIDER_AUTHORITY)
                     .build()
-            val shareUri = ContentUris.withAppendedId(contentProviderUri, artwork.id)
-            val shareMessageBuilder = StringBuilder()
-            shareMessageBuilder.apply {
-                if (artwork.title.isNullOrEmpty()) {
-                    append(artwork.byline)
-                } else {
-                    append("${artwork.title} - ${artwork.byline}")
+            val uri = ContentUris.withAppendedId(contentProviderUri, artwork.id)
+            val items = mutableListOf<String>().apply {
+                artwork.title?.let { if (it.isNotBlank()) add(it) }
+                artwork.byline?.let { if (it.isNotBlank()) add(it) }
+                when (artwork.webUri?.scheme) {
+                    "http", "https" -> add(artwork.webUri.toString())
                 }
-                append(" ${context.getString(R.string.share_message_hashtag)}")
-                if (artwork.webUri != null) {
-                    append("\n\n${artwork.webUri}")
+                when (artwork.persistentUri?.scheme) {
+                    "http", "https" -> add(artwork.persistentUri.toString())
                 }
             }
-            putExtra(Intent.EXTRA_TEXT, shareMessageBuilder.toString())
-            putExtra(Intent.EXTRA_STREAM, shareUri)
+            putExtra(Intent.EXTRA_TEXT, items.joinToString(separator = "\n\n"))
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.command_share_subject))
+            putExtra(Intent.EXTRA_STREAM, uri)
             clipData = ClipData.newUri(context.contentResolver,
-                    context.getString(R.string.command_share_title), shareUri)
+                    context.getString(R.string.command_share_title), uri)
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-            type = context.contentResolver.getType(shareUri)
+            type = context.contentResolver.getType(uri)
         }
         return Intent.createChooser(shareIntent,
                 context.getString(R.string.command_share_title))

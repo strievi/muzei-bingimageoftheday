@@ -14,7 +14,7 @@
     <string name="activity_license_info_license_info_headline">License Info</string>
     <string name="license_info_label">About</string>
     <string name="command_share_title">Share artwork</string>
-    <string name="share_message_hashtag">#BingImageOfTheDay</string>
+    <string name="command_share_subject">My Bing wallpaper today</string>
 
     <string name="mkt_unknown">Random</string>
     <string name="mkt_ar_SA">Arabic – Saudi Arabia</string>

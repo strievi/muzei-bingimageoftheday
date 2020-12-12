@@ -94,7 +94,7 @@ enum class BingMarket private constructor(val marketCode: String, private val ma
         }
 
         fun selectableValues(): Array<BingMarket> {
-            return values().copyOfRange(1, values().size - 1);
+            return values().copyOfRange(1, values().size)
         }
     }
 

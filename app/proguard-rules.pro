@@ -22,6 +22,9 @@
 # From: https://github.com/romannurik/muzei/blob/c2422d2ff99e56068182667667523aac7940babc/main/proguard-project.txt
 
 -keep public class * extends android.app.backup.BackupAgent
+-keepclassmembers class **.R$* {
+   public static <fields>;
+}
 
 -dontobfuscate
 

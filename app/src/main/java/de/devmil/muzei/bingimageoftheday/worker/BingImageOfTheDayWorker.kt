@@ -46,7 +46,7 @@ class BingImageOfTheDayWorker(
                 LogUtil.LOGW(TAG, "Bing API returned no result")
                 return Result.failure()
             }
-            imagesMetadata.maxBy { it.fullStartDate }?.let { latestMetadata ->
+            imagesMetadata.maxByOrNull { it.fullStartDate }?.let { latestMetadata ->
                 val latestToken = "${latestMetadata.fullStartDate}-${market.marketCode}-${isPortrait}-${isCropImage}"
                 ProviderContract.getProviderClient(
                         applicationContext, BING_IMAGE_OF_THE_DAY_AUTHORITY).run {

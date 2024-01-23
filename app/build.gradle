@@ -5,7 +5,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        applicationId "de.devmil.muzei.bingimageofthedayartsource"
+        applicationId "com.strievi.muzei.bingimageofthedayartsource"
         minSdkVersion 19
         targetSdkVersion 30
         versionCode 8
